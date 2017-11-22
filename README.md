@@ -1,5 +1,7 @@
 ### Snake
 
+[![Join the chat at https://gitter.im/Snake-pygame/Lobby](https://badges.gitter.im/Snake-pygame/Lobby.svg)](https://gitter.im/Snake-pygame/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A simple game built using Python Pygame Library.
 
 <dl>
