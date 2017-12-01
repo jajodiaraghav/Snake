@@ -1,3 +1,4 @@
+
 import pygame
 import random
 
@@ -5,7 +6,8 @@ pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.mixer.init()
 pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
-pygame.display.set_caption('My first Pygame')
+
+pygame.display.set_caption('SNAKES')
 img=pygame.image.load('Assets\Images\head.png')
 pygame.display.set_icon(img)
 dirn="right"
@@ -44,9 +46,10 @@ def intro():
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_c:
                     i=False
-        gameDisplay.fill((255,255,255))
-        message("Welcome to Snakes!!",(200,0,100),-30)
-        message("Press C to continue",(100,0,100),80)
+        image = pygame.image.load('index3.jpg')        
+        gameDisplay.blit(image,(0,0))
+        message("   Welcome to Snakes!!",(200,0,0),-59)
+        message("Press C to continue",(100,0,100),260)
         pygame.display.update()
         clock.tick(15)
 
@@ -83,8 +86,9 @@ def gameLoop():
     foodY=round(random.randrange(0,590)/10.0)*10.0
     while not pyExit:
         while pyOver:
-            gameDisplay.fill((255,255,255))
-            message("Game Over! Press C to play Again, Q to Quit",(255,0,0))
+            image = pygame.image.load('python.jpg')        
+            gameDisplay.blit(image,(0,0))
+            message("Game Over! Press C to play Again, Q to Quit",(255,0,0),30)
             pygame.display.update()
 
             for event in pygame.event.get():
