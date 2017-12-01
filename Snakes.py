@@ -2,16 +2,18 @@
 import pygame
 import random
 
+pygame.mixer.pre_init(44100, -16, 2, 2048)
+pygame.mixer.init()
 pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
+
 pygame.display.set_caption('SNAKES')
-img=pygame.image.load('head.png')
+img=pygame.image.load('Assets\Images\head.png')
 pygame.display.set_icon(img)
 dirn="right"
-
 clock = pygame.time.Clock()
 font= pygame.font.SysFont("comicsansms", 35)
-
+k=25
 def score(score):
 	t=font.render("Score: "+str(score), True, (0,0,0))
 	gameDisplay.blit(t,[0,0])
@@ -70,7 +72,8 @@ def snake(snakeList):
     for val in snakeList[:-1]:
         pygame.draw.rect(gameDisplay, (0,155,0), [val[0],val[1],10,10])
 def gameLoop():
-    global dirn
+    global dirn 
+    global k
     pyExit=False
     pyOver=False
     x=400
@@ -95,7 +98,7 @@ def gameLoop():
                         pyOver=False
                     if event.key==pygame.K_c:
                         gameLoop()
-            
+         
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 pyExit=True
@@ -127,7 +130,11 @@ def gameLoop():
             x=800
         if y<=0:
             y=600
-
+        all_keys = pygame.key.get_pressed()
+        if all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]:
+            k=50
+        else:
+            k=25
         x+=x_change
         y+=y_change
         gameDisplay.fill((255,255,255))
@@ -146,13 +153,14 @@ def gameLoop():
         snake(snakeList)
         score(snakeLen-1)
         pygame.display.update()
-        clock.tick(25)
+        clock.tick(k)
 
         if foodX==x and foodY==y:
-                foodX=round(random.randrange(0,790)/10.0)*10.0
-                foodY=round(random.randrange(0,590)/10.0)*10.0
-                snakeLen+=1
-
+            foodX=round(random.randrange(0,790)/10.0)*10.0
+            foodY=round(random.randrange(0,590)/10.0)*10.0
+            snakeLen+=1
+            sound=pygame.mixer.Sound("Assets\Sounds\Point.wav")
+            sound.play()
     pygame.quit()
     quit()
 
