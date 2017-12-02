@@ -8,15 +8,15 @@ pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
 
 pygame.display.set_caption('SNAKES')
-img=pygame.image.load('head.png')
+img=pygame.image.load('Assets\Images\head.png')
 pygame.display.set_icon(img)
 dirn="right"
 clock = pygame.time.Clock()
 font= pygame.font.SysFont("comicsansms", 35)
 k=25
 def score(score):
-    s = "            PRESS P TO PAUSE"
-    t=font.render("Score: "+str(score)+s, True, (0,0,0))
+    s = "PRESS P TO PAUSE"
+    t=font.render("Score: "+str(score)+s.rjust(len(s)+10,' '), True, (0,0,0))
     gameDisplay.blit(t,[0,0])
 
 def pause():
@@ -47,7 +47,7 @@ def intro():
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_c:
                     i=False
-        image = pygame.image.load('index3.jpg')        
+        image = pygame.image.load('Assets\Images\index3.jpg')
         gameDisplay.blit(image,(0,0))
         message("   Welcome to Snakes!!",(200,0,0),-59)
         message("Press C to continue",(100,0,100),260)
@@ -87,8 +87,6 @@ def blocks(foodX,foodY,n=0):
     return block
 
 
-
-
 def gameLoop():
     global dirn 
     global k
@@ -106,7 +104,7 @@ def gameLoop():
     block=blocks(foodX, foodY)
     while not pyExit:
         while pyOver:
-            image = pygame.image.load('python.jpg')        
+            image = pygame.image.load('Assets\Images\python.jpg')
             gameDisplay.blit(image,(0,0))
             message("Game Over! Press C to play Again, Q to Quit",(255,0,0),30)
             message(lossreason, (255, 0, 0), 55)
@@ -114,7 +112,7 @@ def gameLoop():
 
             for event in pygame.event.get():
                 if event.type==pygame.KEYDOWN:
-                    if event.key==pygame.K_q :
+                    if event.key==pygame.K_q:
                         pyExit=True
                         pyOver=False
                     if event.key==pygame.K_c:
@@ -171,7 +169,7 @@ def gameLoop():
             if i == snakeHead:
                 pyOver = True
                 lossreason='Ooops You Hit a BLOCKER'
-                sound = pygame.mixer.Sound("Point.wav")
+                sound = pygame.mixer.Sound("Assets\Sounds\Point.wav")
                 sound.play()
 
         if len(snakeList)>snakeLen:
@@ -180,7 +178,7 @@ def gameLoop():
             if body==snakeHead:
                 pyOver=True
                 lossreason ='Oooops You Hit YOURSELF'
-                sound = pygame.mixer.Sound("Point.wav")
+                sound = pygame.mixer.Sound("Assets\Sounds\Point.wav")
                 sound.play()
 
         snake(snakeList)
@@ -193,7 +191,7 @@ def gameLoop():
             foodY=round(random.randrange(20,590)/10.0)*10.0
             snakeLen+=1
             blocks(foodX,foodY,snakeLen-1)
-            sound=pygame.mixer.Sound("Point.wav")
+            sound=pygame.mixer.Sound("Assets\Sounds\Point.wav")
             sound.play()
 
 
