@@ -37,9 +37,7 @@ class Snake:
             boost is boolean type, to apply boost.
         """
 
-        boost_speed = 0
-        if boost:
-            boost_speed = 5
+        boost_speed = 5 if boost else 0
 
         dx = x * (speed + boost_speed)
         dy = y * (speed + boost_speed)
@@ -49,7 +47,7 @@ class Snake:
 
         self.body.append((self.x, self.y))
 
-        # remove the last instance from the body of the snake.
+        # remove the first instance from the body of the snake.
         if len(self.body) > self.length:
             del self.body[0]
 
