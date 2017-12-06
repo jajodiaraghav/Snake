@@ -1,14 +1,18 @@
 
 import pygame
 import random
-
+import os
+head_path=os.path.join('Assets','Images','head.png')
+index3_path=os.path.join('Assets','Images','index3.jpg')
+python_path=os.path.join('Assets','Images','python.jpg')
+point_path=os.path.join('Assets','Sounds','Point.wav')
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.mixer.init()
 pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
 
 pygame.display.set_caption('SNAKES')
-img=pygame.image.load('Assets\Images\head.png')
+img=pygame.image.load(head_path)
 pygame.display.set_icon(img)
 dirn="right"
 clock = pygame.time.Clock()
@@ -47,7 +51,7 @@ def intro():
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_c:
                     i=False
-        image = pygame.image.load('Assets\Images\index3.jpg')
+        image = pygame.image.load(index3_path)
         gameDisplay.blit(image,(0,0))
         message("   Welcome to Snakes!!",(200,0,0),-59)
         message("Press C to continue",(100,0,100),260)
@@ -104,7 +108,7 @@ def gameLoop():
     block=blocks(foodX, foodY)
     while not pyExit:
         while pyOver:
-            image = pygame.image.load('Assets\Images\python.jpg')
+            image = pygame.image.load(python_path)
             gameDisplay.blit(image,(0,0))
             message("Game Over! Press C to play Again, Q to Quit",(255,0,0),30)
             message(lossreason, (255, 0, 0), 55)
@@ -169,7 +173,7 @@ def gameLoop():
             if i == snakeHead:
                 pyOver = True
                 lossreason='Ooops You Hit a BLOCKER'
-                sound = pygame.mixer.Sound("Assets\Sounds\Point.wav")
+                sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
         if len(snakeList)>snakeLen:
@@ -178,7 +182,7 @@ def gameLoop():
             if body==snakeHead:
                 pyOver=True
                 lossreason ='Oooops You Hit YOURSELF'
-                sound = pygame.mixer.Sound("Assets\Sounds\Point.wav")
+                sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
         snake(snakeList)
@@ -191,7 +195,7 @@ def gameLoop():
             foodY=round(random.randrange(20,590)/10.0)*10.0
             snakeLen+=1
             blocks(foodX,foodY,snakeLen-1)
-            sound=pygame.mixer.Sound("Assets\Sounds\Point.wav")
+            sound = pygame.mixer.Sound(point_path)
             sound.play()
 
 
