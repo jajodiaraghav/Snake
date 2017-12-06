@@ -95,7 +95,7 @@ def get_blocks(foodX, foodY, n=0):
             i -= 1
             continue
 
-        block.append((int(blockX), int(blockY)))
+        block.append((blockX, blockY))
     return block
 
 
@@ -104,15 +104,10 @@ def gameLoop():
     global k
     pyExit = False
     pyOver = False
-    x = 400
-    y = 300
-    x_change = 0
-    y_change = 0
 
-    snake = Snake(x, y, img)
+    snake = Snake(400, 600, img)
+    dx, dy = 0, 0
 
-    # snakeList = []
-    # snakeLen = 1
     foodX = round(random.randrange(0, 790) / 10.0) * 10.0
     foodY = round(random.randrange(20, 590) / 10.0) * 10.0
     lossreason = ''
@@ -140,24 +135,20 @@ def gameLoop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     dirn = "left"
-                    x_change = -1
-                    # x_change = -10
-                    y_change = 0
+                    dx = -1
+                    dy = 0
                 if event.key == pygame.K_RIGHT:
                     dirn = "right"
-                    x_change = 1
-                    # x_change = 10
-                    y_change = 0
+                    dx = 1
+                    dy = 0
                 if event.key == pygame.K_UP:
                     dirn = "up"
-                    y_change = -1
-                    # y_change = -10
-                    x_change = 0
+                    dy = -1
+                    dx = 0
                 if event.key == pygame.K_DOWN:
                     dirn = "down"
-                    y_change = 1
-                    # y_change = 10
-                    x_change = 0
+                    dy = 1
+                    dx = 0
                 if event.key == pygame.K_p:
                     pause()
 
@@ -167,7 +158,7 @@ def gameLoop():
         keyPresses = pygame.key.get_pressed()
         boost_speed = keyPresses[pygame.K_LSHIFT] or keyPresses[pygame.K_RSHIFT]
 
-        snake.move(x_change, y_change, 10, boost_speed)
+        snake.move(dx, dy, 10, boost_speed)
         snake.check_boundary(800, 600)
 
         if snake.ate_itself():

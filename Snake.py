@@ -2,7 +2,18 @@ import pygame
 
 
 class Snake:
+    """
+        A Snake object.
+        Members:
+        x, y: store the position of the head.
+        head_img: stores the pygame.img reference.
+        length: size of the snake, 1 initially.
+        body: stores the x, y coordinate of the previous frame.
+    """
+
     def __init__(self, x, y, img):
+        """ Initialize the snake! """
+
         self.x = x
         self.y = y
         self.length = 1
@@ -10,12 +21,22 @@ class Snake:
         self.head_img = img
 
     def get_head(self):
+        """ Returns a tuple containing the coordinate of the head """
+
         return (self.x, self.y)
 
     def get_length(self):
+        """ Returns the length of the snake """
+
         return self.length
 
     def move(self, x, y, speed, boost):
+        """
+            Moves the snake in x or y direction by some speed.
+            x, y can be +1 or -1, depending on the direction.
+            boost is boolean type, to apply boost.
+        """
+
         boost_speed = 0
         if boost:
             boost_speed = 5
@@ -28,16 +49,22 @@ class Snake:
 
         self.body.append((self.x, self.y))
 
+        # remove the last instance from the body of the snake.
         if len(self.body) > self.length:
             del self.body[0]
 
     def check_boundary(self, width, height):
+        """ Head wraps around to 0 """
+
         self.x = self.x % width
         self.y = self.y % height
 
     def ate_itself(self):
+        """ Returns true if the snake itself """
+
         head = (self.x, self.y)
 
+        # for every part check if the head collides with the body.
         for part in self.body[:-1]:
             if head == part:
                 return True
@@ -45,6 +72,8 @@ class Snake:
         return False
 
     def draw(self, game_display, direction, color):
+        """ Draws the snake body onto the game_display """
+
         head = self.head_img
 
         if direction == "right":
@@ -60,4 +89,6 @@ class Snake:
             pygame.draw.rect(game_display, color, (part[0], part[1], 10, 10))
 
     def increment_length(self):
+        """ Increment length """
+
         self.length += 1
