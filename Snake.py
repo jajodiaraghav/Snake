@@ -17,7 +17,7 @@ class Snake:
         self.x = x
         self.y = y
         self.length = 1
-        self.body = []
+        self.body = [(x, y)]
         self.head_img = img
 
     def get_head(self):
