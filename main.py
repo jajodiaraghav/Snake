@@ -133,19 +133,19 @@ def gameLoop():
                 pyExit = True
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and dirn != "right":
                     dirn = "left"
                     dx = -1
                     dy = 0
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and dirn != "left":
                     dirn = "right"
                     dx = 1
                     dy = 0
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and dirn != "down":
                     dirn = "up"
                     dy = -1
                     dx = 0
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN != dirn != "up":
                     dirn = "down"
                     dy = 1
                     dx = 0
