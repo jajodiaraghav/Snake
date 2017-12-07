@@ -30,17 +30,17 @@ class Snake:
 
         return self.length
 
-    def move(self, x, y, speed, boost):
+    def move(self, x, y, speed):
         """
             Moves the snake in x or y direction by some speed.
             x, y can be +1 or -1, depending on the direction.
             boost is boolean type, to apply boost.
         """
 
-        boost_speed = 5 if boost else 0
+        
 
-        dx = x * (speed + boost_speed)
-        dy = y * (speed + boost_speed)
+        dx = x * (speed )
+        dy = y * (speed )
 
         self.x += dx
         self.y += dy
