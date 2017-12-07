@@ -4,7 +4,7 @@ import os
 from Snake import *
 from Food import *
 from Block import *
-from worlds import *
+from World import *
 
 
 head_path = os.path.join('Assets', 'Images', 'head.png')
@@ -115,12 +115,12 @@ def gameLoop():
     pyOver = False
 
     score = 0
-    i = 0  # world number
+    world_num = 0
 
     # Initialize the game
-    snake = Snake(400, height, img)
-    food = Food(width / 2, height / 2)
-    blocks = get_blocks(food.get_rect(), 25)
+    snake = Snake(200, 200, img)
+    food = Food(int(width / 2), int(height / 2))
+    blocks = worlds(width, height, world_num)
 
     # Keeps track of the direction of the snake.
     dx, dy = 0, 0
@@ -167,10 +167,12 @@ def gameLoop():
                 if event.key == pygame.K_p:
                     pause()
 
-        if score > 10:  # level changer value
+        # level changer value
+        if score > 10:
             score = 0
-            i += 1
-            blocks = worlds(i)
+            world_num += 1
+            blocks = worlds(width, height, world_num)
+            food.x, food.y = int(width / 2), int(height / 2)
 
         # Engage boost of pressing shift
         keyPresses = pygame.key.get_pressed()
@@ -182,9 +184,8 @@ def gameLoop():
         if boost_speed == 1:
             iterations.append(2)
 
-        for iterate in iterations:
+        for i in iterations:
             """ Update snake """
-            # Update the snake. Check for collisions.
             snake.move(dx, dy, 10)
             snake.check_boundary(width, height)
 
@@ -192,7 +193,6 @@ def gameLoop():
             food_rect = food.get_rect()
 
             """ Snake-Snake collision """
-            # if snake eats itself then game over.
             if snake.ate_itself():
                 pyOver = True
                 lossreason = 'Oooops You Hit YOURSELF'
@@ -200,7 +200,6 @@ def gameLoop():
                 sound.play()
 
             """ Snake-Block collision """
-            # if snake collides with any of the blocks then game over.
             for block in blocks:
                 block_rect = block.get_rect()
                 if block_rect.colliderect(snake_rect):
@@ -215,12 +214,17 @@ def gameLoop():
                 score += 1
                 snake.increment_length()
 
+                sound = pygame.mixer.Sound(point_path)
+                sound.play()
+
                 # generate food at random x, y.
                 food.generate_food(width, height)
 
                 # try generating the food at a position where blocks are not present.
                 while food_collides_block(food.get_rect(), blocks):
                     food.generate_food(width, height)
+
+                print score, food.x, food.y
 
             """ Draw """
             game_display.fill((255, 255, 255))
