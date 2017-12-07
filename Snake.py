@@ -17,6 +17,7 @@ class Snake:
         self.x = x
         self.y = y
         self.length = 1
+        self.size = 10
         self.body = [(x, y)]
         self.head_img = img
 
@@ -37,10 +38,8 @@ class Snake:
             boost is boolean type, to apply boost.
         """
 
-        
-
-        dx = x * (speed )
-        dy = y * (speed )
+        dx = x * speed
+        dy = y * speed
 
         self.x += dx
         self.y += dy
@@ -84,9 +83,14 @@ class Snake:
         game_display.blit(head, (self.body[-1][0], self.body[-1][1]))
 
         for part in self.body[:-1]:
-            pygame.draw.rect(game_display, color, (part[0], part[1], 10, 10))
+            pygame.draw.rect(game_display, color, (part[0], part[1], self.size, self.size))
 
     def increment_length(self):
         """ Increment length """
 
         self.length += 1
+
+    def get_rect(self):
+        """ Return rectangle object of the snake head for collision detection """
+
+        return pygame.Rect(self.x, self.y, self.size, self.size)
