@@ -2,6 +2,8 @@ import pygame
 import random
 import os
 from Snake import *
+from Food import *
+from Block import *
 
 head_path = os.path.join('Assets', 'Images', 'head.png')
 index3_path = os.path.join('Assets', 'Images', 'index3.jpg')
@@ -10,7 +12,9 @@ point_path = os.path.join('Assets', 'Sounds', 'Point.wav')
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.mixer.init()
 pygame.init()
-game_display = pygame.display.set_mode((800, 600))
+
+width, height = 800, 600
+game_display = pygame.display.set_mode((width, height))
 
 pygame.display.set_caption('SNAKES')
 img = pygame.image.load(head_path)
@@ -18,7 +22,7 @@ pygame.display.set_icon(img)
 dirn = "right"
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("comicsansms", 35)
-k = 25
+FPS = 25
 
 
 def score(score):
@@ -71,32 +75,35 @@ def message(m, color, dispy=0):
     game_display.blit(text, t)
 
 
-def snake(snakeList):
-    if dirn == "right":
-        head = pygame.transform.rotate(img, 270)
-    if dirn == "left":
-        head = pygame.transform.rotate(img, 90)
-    if dirn == "up":
-        head = img
-    if dirn == "down":
-        head = pygame.transform.rotate(img, 180)
-    game_display.blit(head, [snakeList[-1][0], snakeList[-1][1]])
-    for val in snakeList[:-1]:
-        pygame.draw.rect(game_display, (0, 155, 0), [val[0], val[1], 10, 10])
+def food_collides_block(food_rect, blocks):
+    """ Returns True if any of the blocks collide with the food """
+
+    for block in blocks:
+        if food_rect.colliderect(block.get_rect()):
+            return True
+
+    return False
 
 
-def get_blocks(foodX, foodY, n=0):
-    # showing blocks
-    block = []
-    for i in range(20 + n):
-        blockX = round(random.randrange(0, 790) / 10.0) * 10.0
-        blockY = round(random.randrange(20, 590) / 10.0) * 10.0
-        if abs(blockX - foodX) <= 20 or abs(blockY - foodY) <= 20:
+def get_blocks(food_rect, n):
+    """ Generates `n` blocks at random x, y """
+
+    blocks = list()
+    for i in range(n):
+        block_x = round(random.randrange(0, width) / 10.0) * 10
+        block_y = round(random.randrange(0, height) / 10.0) * 10
+
+        block_width, block_height = 10, 10
+        block = Block(block_x, block_y, block_width, block_height)
+
+        # if the block collides with food, generate at other x, y.
+        if food_rect.colliderect(block.get_rect()):
             i -= 1
             continue
 
-        block.append((blockX, blockY))
-    return block
+        blocks.append(block)
+
+    return blocks
 
 
 def gameLoop():
@@ -105,13 +112,15 @@ def gameLoop():
     pyExit = False
     pyOver = False
 
-    snake = Snake(400, 600, img)
-    dx, dy = 0, 0
+    # Initialize the game
+    snake = Snake(400, height, img)
+    food = Food(width / 2, height / 2)
+    blocks = get_blocks(food.get_rect(), 25)
 
-    foodX = round(random.randrange(0, 790) / 10.0) * 10.0
-    foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+    # Keeps track of the direction of the snake.
+    dx, dy = 0, 0
     lossreason = ''
-    blocks = get_blocks(foodX, foodY)
+
     while not pyExit:
         while pyOver:
             image = pygame.image.load(python_path)
@@ -128,6 +137,7 @@ def gameLoop():
                     if event.key == pygame.K_c:
                         gameLoop()
 
+        """ Events """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pyExit = True
@@ -152,45 +162,64 @@ def gameLoop():
                 if event.key == pygame.K_p:
                     pause()
 
-        game_display.fill((255, 255, 255))
-        pygame.draw.rect(game_display, (0, 255, 0), [foodX, foodY, 10, 10])
-
+        """ Update snake """
+        # Engage boost of pressing shift
         keyPresses = pygame.key.get_pressed()
         boost_speed = keyPresses[pygame.K_LSHIFT] or keyPresses[pygame.K_RSHIFT]
 
-        snake.move(dx, dy, 10, boost_speed)
-        snake.check_boundary(800, 600)
+        # Update the snake. Check for collisions.
+        snake.move(dx, dy, 5, boost_speed)
+        snake.check_boundary(width, height)
 
+        snake_rect = snake.get_rect()
+        food_rect = food.get_rect()
+
+        """ Snake-Snake collision """
+        # if snake eats itself then game over.
         if snake.ate_itself():
             pyOver = True
             lossreason = 'Oooops You Hit YOURSELF'
             sound = pygame.mixer.Sound(point_path)
             sound.play()
 
-        snake.draw(game_display, dirn, (0, 155, 0))
-
+        """ Snake-Block collision """
+        # if snake collides with any of the blocks then game over.
         for block in blocks:
-            pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
-
-            if block == snake.get_head():
+            block_rect = block.get_rect()
+            if block_rect.colliderect(snake_rect):
                 pyOver = True
                 lossreason = 'Ooops You Hit a BLOCKER'
                 sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
-        if (foodX, foodY) == snake.get_head():
-            foodX = round(random.randrange(0, 790) / 10.0) * 10.0
-            foodY = round(random.randrange(20, 590) / 10.0) * 10.0
-
+        """ Snake-Food collision """
+        # if snake collides with food, increase its length.
+        if food_rect.colliderect(snake_rect):
             snake.increment_length()
 
-            get_blocks(foodX, foodY, snake.get_length())
+            # generate food at random x, y.
+            food.generate_food(width, height)
+
+            # try generating the food at a position where blocks are not present.
+            while food_collides_block(food.get_rect(), blocks):
+                food.generate_food(width, height)
 
             sound = pygame.mixer.Sound(point_path)
             sound.play()
 
+        """ Draw """
+        game_display.fill((255, 255, 255))
+
+        # draw the food and snake.
+        snake.draw(game_display, dirn, (0, 155, 0))
+        food.draw(game_display, (0, 255, 0))
+
+        # draw the blocks.
+        for block in blocks:
+            block.draw(game_display, (255, 0, 0))
+
         pygame.display.update()
-        clock.tick(k)
+        clock.tick(FPS)
 
     pygame.quit()
     quit()
