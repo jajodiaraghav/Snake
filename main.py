@@ -157,37 +157,70 @@ def gameLoop():
 
         keyPresses = pygame.key.get_pressed()
         boost_speed = keyPresses[pygame.K_LSHIFT] or keyPresses[pygame.K_RSHIFT]
+        #if boost_speed is true it will move 2 blocks in one gameloop or else it will just move one block
+        if boost_speed == 1:
+            for i in [1,2]:
+                snake.move(dx, dy, 10)
+                snake.check_boundary(800, 600)
 
-        snake.move(dx, dy, 10, boost_speed)
-        snake.check_boundary(800, 600)
+                if snake.ate_itself():
+                    pyOver = True
+                    lossreason = 'Oooops You Hit YOURSELF'
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
 
-        if snake.ate_itself():
-            pyOver = True
-            lossreason = 'Oooops You Hit YOURSELF'
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+                snake.draw(game_display, dirn, (0, 155, 0))
 
-        snake.draw(game_display, dirn, (0, 155, 0))
+                for block in blocks:
+                    pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
 
-        for block in blocks:
-            pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
+                    if block == snake.get_head():
+                        pyOver = True
+                        lossreason = 'Ooops You Hit a BLOCKER'
+                        sound = pygame.mixer.Sound(point_path)
+                        sound.play()
 
-            if block == snake.get_head():
+                if (foodX, foodY) == snake.get_head():
+                    foodX = round(random.randrange(0, 790) / 10.0) * 10.0
+                    foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+
+                    snake.increment_length()
+
+                    get_blocks(foodX, foodY, snake.get_length())
+
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
+        else:
+            snake.move(dx, dy, 10)
+            snake.check_boundary(800, 600)
+
+            if snake.ate_itself():
                 pyOver = True
-                lossreason = 'Ooops You Hit a BLOCKER'
+                lossreason = 'Oooops You Hit YOURSELF'
                 sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
-        if (foodX, foodY) == snake.get_head():
-            foodX = round(random.randrange(0, 790) / 10.0) * 10.0
-            foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+            snake.draw(game_display, dirn, (0, 155, 0))
 
-            snake.increment_length()
+            for block in blocks:
+                pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
 
-            get_blocks(foodX, foodY, snake.get_length())
+                if block == snake.get_head():
+                    pyOver = True
+                    lossreason = 'Ooops You Hit a BLOCKER'
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
 
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+            if (foodX, foodY) == snake.get_head():
+                foodX = round(random.randrange(0, 790) / 10.0) * 10.0
+                foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+
+                snake.increment_length()
+
+                get_blocks(foodX, foodY, snake.get_length())
+
+                sound = pygame.mixer.Sound(point_path)
+                sound.play()
 
         pygame.display.update()
         clock.tick(k)
