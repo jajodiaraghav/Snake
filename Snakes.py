@@ -55,18 +55,24 @@ def message(m,color,dispy=0):
     t.center=(400),(300)+dispy
     gameDisplay.blit(text, t)
     
-def snake(snakeList):
-    if dirn=="right":
-        head=pygame.transform.rotate(img,270)
-    if dirn=="left":
-        head=pygame.transform.rotate(img,90)
-    if dirn=="up":
-        head=img
-    if dirn=="down":
-        head=pygame.transform.rotate(img,180)
+class Player:
+    x = 10
+    y = 10
+    speed = 1
+ 
+    def moveRight(self):
+        self.x = self.x + self.speed
+ 
+    def moveLeft(self):
+        self.x = self.x - self.speed
+ 
+    def moveUp(self):
+        self.y = self.y - self.speed
+ 
+    def moveDown(self):
+        self.y = self.y + self.speed
     gameDisplay.blit(head, [snakeList[-1][0],snakeList[-1][1]])
-    for val in snakeList[:-1]:
-        pygame.draw.rect(gameDisplay, (0,155,0), [val[0],val[1],10,10])
+
 def gameLoop():
     global dirn
     pyExit=False
