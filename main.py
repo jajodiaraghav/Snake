@@ -2,6 +2,48 @@ import pygame
 import random
 import os
 from Snake import *
+def worlds(n):
+    # gives blocks for nth world
+    
+    if n == 0:
+        return []
+    elif n == 1:
+        blocks = []
+        for i in range(0,250//10):
+            blocks.append((i*10,0))
+            blocks.append((550+i*10,0))
+            blocks.append((i*10,590))
+            blocks.append((550+i*10,590))
+        for i in range(0,20):
+            blocks.append((0,(i+1)*10))
+            blocks.append((0,400+(i+1)*10))
+            blocks.append((790,(i+1)*10))
+            blocks.append((790,400+(i+1)*10))
+        return blocks
+    elif n == 2:
+        blocks = []
+        for i in range(0,800//10):
+            blocks.append((i*10,0))
+            blocks.append((i*10,590))
+        for i in range(0,58):
+            blocks.append((0,(i+1)*10))
+            blocks.append((790,(i+1)*10))
+            
+        return blocks
+    elif n > 2:
+        blocks = []
+        for i in range(0,800//10):
+            blocks.append((i*10,0))
+            blocks.append((i*10,590))
+        for i in range(0,58):
+            blocks.append((0,(i+1)*10))
+            blocks.append((790,(i+1)*10))
+        for i in range(0,25):
+            blocks.append((400,(i+1)*10))
+        for i in range(35,58):
+            blocks.append((400,(i+1)*10))    
+                
+        return blocks
 
 head_path = os.path.join('Assets', 'Images', 'head.png')
 index3_path = os.path.join('Assets', 'Images', 'index3.jpg')
@@ -20,11 +62,10 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("comicsansms", 35)
 k = 25
 
-
-def score(score):
-    s = "PRESS P TO PAUSE"
-    t = font.render("Score: " + str(score) + s.rjust(len(s) + 10, ' '), True, (0, 0, 0))
-    game_display.blit(t, [0, 0])
+# function for total score
+def total(score,i):
+    total = score + i * 10
+    return total
 
 
 def pause():
@@ -85,18 +126,7 @@ def snake(snakeList):
         pygame.draw.rect(game_display, (0, 155, 0), [val[0], val[1], 10, 10])
 
 
-def get_blocks(foodX, foodY, n=0):
-    # showing blocks
-    block = []
-    for i in range(20 + n):
-        blockX = round(random.randrange(0, 790) / 10.0) * 10.0
-        blockY = round(random.randrange(20, 590) / 10.0) * 10.0
-        if abs(blockX - foodX) <= 20 or abs(blockY - foodY) <= 20:
-            i -= 1
-            continue
 
-        block.append((blockX, blockY))
-    return block
 
 
 def gameLoop():
@@ -105,13 +135,14 @@ def gameLoop():
     pyExit = False
     pyOver = False
 
-    snake = Snake(400, 600, img)
+    snake = Snake(300, 300, img)
     dx, dy = 0, 0
-
+    i = 0 #world number
+    score = 0
     foodX = round(random.randrange(0, 790) / 10.0) * 10.0
     foodY = round(random.randrange(20, 590) / 10.0) * 10.0
     lossreason = ''
-    blocks = get_blocks(foodX, foodY)
+    
     while not pyExit:
         while pyOver:
             image = pygame.image.load(python_path)
@@ -151,43 +182,95 @@ def gameLoop():
                     dx = 0
                 if event.key == pygame.K_p:
                     pause()
-
+        if score > 10: # level changer value
+            score = 0
+            i += 1
+            
         game_display.fill((255, 255, 255))
         pygame.draw.rect(game_display, (0, 255, 0), [foodX, foodY, 10, 10])
-
         keyPresses = pygame.key.get_pressed()
         boost_speed = keyPresses[pygame.K_LSHIFT] or keyPresses[pygame.K_RSHIFT]
+        #if boost_speed is true it will move 2 blocks in one gameloop or else it will just move one block
+        if boost_speed == 1:
+            for loop in [1,2]:
+                snake.move(dx, dy, 10)
+                snake.check_boundary(800, 600)
 
-        snake.move(dx, dy, 10, boost_speed)
-        snake.check_boundary(800, 600)
+                if snake.ate_itself():
+                    pyOver = True
+                    lossreason = 'Oooops You Hit YOURSELF'
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
 
-        if snake.ate_itself():
-            pyOver = True
-            lossreason = 'Oooops You Hit YOURSELF'
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+                snake.draw(game_display, dirn, (0, 155, 0))
+                blocks = worlds(i)
+                for block in blocks:
+                    pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
 
-        snake.draw(game_display, dirn, (0, 155, 0))
+                    if block == snake.get_head():
+                        pyOver = True
+                        lossreason = 'Ooops You Hit a BLOCKER'
+                        sound = pygame.mixer.Sound(point_path)
+                        sound.play()
 
-        for block in blocks:
-            pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
+                if (foodX, foodY) == snake.get_head():
+                    foodX = round(random.randrange(0, 790) / 10.0) * 10.0
+                    foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+                    for block in blocks:
+                        if block == (foodX, foodY):
+                            foodX += 20
+                            foodY += 20
+                    snake.increment_length()
+                    score += 1
+                        
 
-            if block == snake.get_head():
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
+        else:
+            snake.move(dx, dy, 10)
+            snake.check_boundary(800, 600)
+
+            if snake.ate_itself():
                 pyOver = True
-                lossreason = 'Ooops You Hit a BLOCKER'
+                lossreason = 'Oooops You Hit YOURSELF'
                 sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
-        if (foodX, foodY) == snake.get_head():
-            foodX = round(random.randrange(0, 790) / 10.0) * 10.0
-            foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+            snake.draw(game_display, dirn, (0, 155, 0))
+            blocks = worlds(i)
+            for block in blocks:
+                pygame.draw.rect(game_display, (255, 0, 0), [block[0], block[1], 10, 10])
 
-            snake.increment_length()
+                if block == snake.get_head():
+                    pyOver = True
+                    lossreason = 'Ooops You Hit a BLOCKER'
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
 
-            get_blocks(foodX, foodY, snake.get_length())
+            if (foodX, foodY) == snake.get_head():
+                foodX = round(random.randrange(0, 790) / 10.0) * 10.0
+                foodY = round(random.randrange(20, 590) / 10.0) * 10.0
+                for block in blocks:
+                    if block == (foodX, foodY):
+                        foodX += 20
+                        foodY += 20
+                snake.increment_length()
+                score += 1
+                    
 
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+                sound = pygame.mixer.Sound(point_path)
+                sound.play()
+
+
+
+
+
+
+
+
+
+        
+        
 
         pygame.display.update()
         clock.tick(k)
