@@ -4,6 +4,8 @@ import os
 from Snake import *
 from Food import *
 from Block import *
+from worlds import *
+
 
 head_path = os.path.join('Assets', 'Images', 'head.png')
 index3_path = os.path.join('Assets', 'Images', 'index3.jpg')
@@ -25,10 +27,10 @@ font = pygame.font.SysFont("comicsansms", 35)
 FPS = 25
 
 
-def score(score):
-    s = "PRESS P TO PAUSE"
-    t = font.render("Score: " + str(score) + s.rjust(len(s) + 10, ' '), True, (0, 0, 0))
-    game_display.blit(t, [0, 0])
+def total(score, i):
+    # function for total score
+    total = score + i * 10
+    return total
 
 
 def pause():
@@ -112,6 +114,9 @@ def gameLoop():
     pyExit = False
     pyOver = False
 
+    score = 0
+    i = 0  # world number
+
     # Initialize the game
     snake = Snake(400, height, img)
     food = Food(width / 2, height / 2)
@@ -162,57 +167,67 @@ def gameLoop():
                 if event.key == pygame.K_p:
                     pause()
 
-        """ Update snake """
+        if score > 10:  # level changer value
+            score = 0
+            i += 1
+            blocks = worlds(i)
+
         # Engage boost of pressing shift
         keyPresses = pygame.key.get_pressed()
         boost_speed = keyPresses[pygame.K_LSHIFT] or keyPresses[pygame.K_RSHIFT]
 
-        # Update the snake. Check for collisions.
-        snake.move(dx, dy, 5, boost_speed)
-        snake.check_boundary(width, height)
+        # if boost_speed is true it will move 2 blocks in one gameloop
+        # else it will just move one block
+        iterations = [1]
+        if boost_speed == 1:
+            iterations.append(2)
 
-        snake_rect = snake.get_rect()
-        food_rect = food.get_rect()
+        for iterate in iterations:
+            """ Update snake """
+            # Update the snake. Check for collisions.
+            snake.move(dx, dy, 10)
+            snake.check_boundary(width, height)
 
-        """ Snake-Snake collision """
-        # if snake eats itself then game over.
-        if snake.ate_itself():
-            pyOver = True
-            lossreason = 'Oooops You Hit YOURSELF'
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+            snake_rect = snake.get_rect()
+            food_rect = food.get_rect()
 
-        """ Snake-Block collision """
-        # if snake collides with any of the blocks then game over.
-        for block in blocks:
-            block_rect = block.get_rect()
-            if block_rect.colliderect(snake_rect):
+            """ Snake-Snake collision """
+            # if snake eats itself then game over.
+            if snake.ate_itself():
                 pyOver = True
-                lossreason = 'Ooops You Hit a BLOCKER'
+                lossreason = 'Oooops You Hit YOURSELF'
                 sound = pygame.mixer.Sound(point_path)
                 sound.play()
 
-        """ Snake-Food collision """
-        # if snake collides with food, increase its length.
-        if food_rect.colliderect(snake_rect):
-            snake.increment_length()
+            """ Snake-Block collision """
+            # if snake collides with any of the blocks then game over.
+            for block in blocks:
+                block_rect = block.get_rect()
+                if block_rect.colliderect(snake_rect):
+                    pyOver = True
+                    lossreason = 'Ooops You Hit a BLOCKER'
+                    sound = pygame.mixer.Sound(point_path)
+                    sound.play()
 
-            # generate food at random x, y.
-            food.generate_food(width, height)
+            """ Snake-Food collision """
+            # if snake collides with food, increase its length.
+            if food_rect.colliderect(snake_rect):
+                score += 1
+                snake.increment_length()
 
-            # try generating the food at a position where blocks are not present.
-            while food_collides_block(food.get_rect(), blocks):
+                # generate food at random x, y.
                 food.generate_food(width, height)
 
-            sound = pygame.mixer.Sound(point_path)
-            sound.play()
+                # try generating the food at a position where blocks are not present.
+                while food_collides_block(food.get_rect(), blocks):
+                    food.generate_food(width, height)
 
-        """ Draw """
-        game_display.fill((255, 255, 255))
+            """ Draw """
+            game_display.fill((255, 255, 255))
 
-        # draw the food and snake.
-        snake.draw(game_display, dirn, (0, 155, 0))
-        food.draw(game_display, (0, 255, 0))
+            # draw the food and snake.
+            snake.draw(game_display, dirn, (0, 155, 0))
+            food.draw(game_display, (0, 255, 0))
 
         # draw the blocks.
         for block in blocks:
