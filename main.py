@@ -6,6 +6,8 @@ from Food import *
 from Block import *
 from World import *
 
+from tkinter import *
+import tkinter.simpledialog
 
 head_path = os.path.join('Assets', 'Images', 'head.png')
 index3_path = os.path.join('Assets', 'Images', 'index3.jpg')
@@ -31,9 +33,14 @@ def total(score, i):
     # function for total score
     total = score + i * 10
     return total
+#for highscore
+highscorefile = open('highscore.txt','rt')
+highscore = highscorefile.readline()
+highscore = int(highscore)
+namehighscore = highscorefile.readline()
+highscorefile.close()
 
-
-def pause():
+def pause(scorestr):
     paused = True
     while paused:
         for event in pygame.event.get():
@@ -48,6 +55,8 @@ def pause():
                     quit()
         message("Paused", (0, 0, 0))
         message("C to continue, Q to Quit", (200, 0, 0), 40)
+        #display score on pause
+        message(scorestr,(255,0,0),80)
         pygame.display.update()
         clock.tick(5)
 
@@ -111,12 +120,14 @@ def get_blocks(food_rect, n):
 def gameLoop():
     global dirn
     global k
+    global highscore
+    global namehighscore
     pyExit = False
     pyOver = False
 
     score = 0
     world_num = 0
-
+    scorestr = "Score:0"
     # Initialize the game
     snake = Snake(200, 200, img)
     food = Food(int(width / 2), int(height / 2))
@@ -130,8 +141,53 @@ def gameLoop():
         while pyOver:
             image = pygame.image.load(python_path)
             game_display.blit(image, (0, 0))
-            message("Game Over! Press C to play Again, Q to Quit", (255, 0, 0), 30)
-            message(lossreason, (255, 0, 0), 55)
+            
+            message("Game Over! Press C to play Again, Q to Quit", (255, 0, 0), -20)
+            message(lossreason, (255, 0, 0), 30)
+            #display score on game over
+            message("Your"+scorestr,(255,0,0),80)
+            if tot > highscore:
+                #message("Highscore!!!",(255,0,0),120)
+                #write new highscore
+                highscorefile = open('highscore.txt','wt')      
+                highscorefile.write(str(tot)+"\n")
+                
+                #name window
+                def namewrite():
+                    highscorefile.write(v.get())
+                    scorewindow.destroy()
+                
+                scorewindow = Tk()
+                scorewindow.geometry('300x100')
+                frame=Frame(scorewindow,width=100,height=100)
+                frame.pack()
+                scorewindow.title("congratulations")
+                
+                
+                Label(frame, text='you\'ve made highscore!!!!').pack(side='top')
+                v = StringVar()
+                v.set("type your name")
+                textbox = Entry(frame, textvariable = v)
+                textbox.pack(side='top')
+                
+                okbutton=Button(frame,text="ok",fg="black",bg="white", command = namewrite)
+                okbutton.pack(side='bottom') 
+
+                
+                
+                scorewindow.mainloop()
+                highscorefile.close()
+                
+                #incase useer wants to countinue after creating highscore
+                #to read his new score
+                highscorefile = open('highscore.txt','rt')
+                highscore = highscorefile.readline()
+                highscore = int(highscore)
+                namehighscore = highscorefile.readline()
+                highscorefile.close()
+
+            else:
+                message("Highscore by "+namehighscore+":"+str(highscore),(255,0,0),120)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -165,7 +221,7 @@ def gameLoop():
                     dy = 1
                     dx = 0
                 if event.key == pygame.K_p:
-                    pause()
+                    pause(scorestr)
 
         # level changer value
         if score > 10:
@@ -224,7 +280,7 @@ def gameLoop():
                 while food_collides_block(food.get_rect(), blocks):
                     food.generate_food(width, height)
 
-                print score, food.x, food.y
+                
 
             """ Draw """
             game_display.fill((255, 255, 255))
@@ -236,6 +292,12 @@ def gameLoop():
         # draw the blocks.
         for block in blocks:
             block.draw(game_display, (255, 0, 0))
+        #count and display score on screen
+        totalscore = total(score,world_num)
+        scorestr = 'Score: ' + str(totalscore)
+        font = pygame.font.SysFont(None,30)
+        text = font.render(scorestr, True,(0,0,255))
+        game_display.blit(text,(0,0,20,20))      
 
         pygame.display.update()
         clock.tick(FPS)
