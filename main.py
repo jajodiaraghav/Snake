@@ -25,7 +25,7 @@ k = 25
 
 # function for total score
 def total(score,i):
-    total = score + i * 5
+    total = score + i * 10
     return total
 #for highscore
 highscorefile = open('highscore.txt','rt')
