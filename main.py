@@ -206,8 +206,9 @@ def gameLoop():
                             gameLoop()
                     except:
                         blank = []  # bypass the exception
-
+                        
         """ Events """
+        #the conditions are modified to work with the buttons
         for event in pygame.event.get():
             keyp = action()
             # blank is not used anywhere
