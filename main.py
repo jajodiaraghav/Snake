@@ -55,7 +55,7 @@ def pause(scorestr):
                     quit()
         message("Paused", (0, 0, 0))
         message("C to continue, Q to Quit", (200, 0, 0), 40)
-                #display score on pause
+        #display score on pause
         message(scorestr,(255,0,0),80)
         pygame.display.update()
         clock.tick(5)
@@ -170,8 +170,8 @@ def gameLoop():
                 textbox = Entry(frame, textvariable = v)
                 textbox.pack(side='top')
                 
-                butok=Button(frame,text="ok",fg="black",bg="white", command = namewrite)
-                butok.pack(side='bottom') 
+                okbutton=Button(frame,text="ok",fg="black",bg="white", command = namewrite)
+                okbutton.pack(side='bottom') 
 
                 
                 
@@ -280,7 +280,7 @@ def gameLoop():
                 while food_collides_block(food.get_rect(), blocks):
                     food.generate_food(width, height)
 
-                #print score, food.x, food.y
+                
 
             """ Draw """
             game_display.fill((255, 255, 255))
@@ -293,8 +293,8 @@ def gameLoop():
         for block in blocks:
             block.draw(game_display, (255, 0, 0))
         #count and display score on screen
-        tot = total(score,world_num)
-        scorestr = 'Score:' + str(tot)
+        totalscore = total(score,world_num)
+        scorestr = 'Score: ' + str(totalscore)
         font = pygame.font.SysFont(None,30)
         text = font.render(scorestr, True,(0,0,255))
         game_display.blit(text,(0,0,20,20))      
