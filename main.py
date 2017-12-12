@@ -36,7 +36,10 @@ def total(score, i):
 #for highscore
 highscorefile = open('highscore.txt','rt')
 highscore = highscorefile.readline()
-highscore = int(highscore)
+try:
+    highscore = int(highscore)
+except ValueError:
+    highscore = 0
 namehighscore = highscorefile.readline()
 highscorefile.close()
 
