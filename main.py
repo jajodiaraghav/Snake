@@ -146,11 +146,11 @@ def gameLoop():
             message(lossreason, (255, 0, 0), 30)
             #display score on game over
             message("Your"+scorestr,(255,0,0),80)
-            if tot > highscore:
+            if totalscore > highscore:
                 #message("Highscore!!!",(255,0,0),120)
                 #write new highscore
                 highscorefile = open('highscore.txt','wt')      
-                highscorefile.write(str(tot)+"\n")
+                highscorefile.write(str(totalscore)+"\n")
                 
                 #name window
                 def namewrite():
