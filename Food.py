@@ -1,8 +1,7 @@
 import random
 import pygame
 
-
-class Food:
+class Food(object):
     """
         A Food object.
         Members:
