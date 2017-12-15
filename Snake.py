@@ -1,7 +1,7 @@
 import pygame
 
 
-class Snake:
+class Snake(object):
     """
         A Snake object.
         Members:

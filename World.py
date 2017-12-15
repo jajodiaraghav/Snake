@@ -1,11 +1,11 @@
-from Block import *
+from Block import Block
 
 
-def worlds(width, height, n):
+def worlds(width, height, level):
     """ gives blocks for nth world """
 
     blocks = list()
-    if n == 1:
+    if level == 1:
         block_left_top1 = Block(0, 0, int(width / 3), 10)
         block_left_top2 = Block(0, 0, 10, int(height / 3))
 
@@ -26,7 +26,7 @@ def worlds(width, height, n):
         blocks.append(block_right_top2)
         blocks.append(block_right_bottom1)
         blocks.append(block_right_bottom2)
-    elif n == 2:
+    elif level == 2:
 
         block_top = Block(0, 0, width, 10)
         block_left = Block(0, 0, 10, height)
@@ -38,7 +38,7 @@ def worlds(width, height, n):
         blocks.append(block_bottom)
         blocks.append(block_right)
 
-    elif n > 2:
+    elif level > 2:
         block_top = Block(0, 0, width, 10)
         block_left = Block(0, 0, 10, height)
         block_bottom = Block(0, height - 10, width, 10)

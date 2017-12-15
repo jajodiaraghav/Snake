@@ -1,8 +1,7 @@
-import random
 import pygame
 
 
-class Block:
+class Block(object):
     """
         A Block object.
         Members:
