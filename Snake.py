@@ -53,7 +53,7 @@ class Snake(object):
     def check_boundary(self, width, height):
         """ Head wraps around to 0 """
 
-        self.x = self.x % width
+        self.x = self.x % (width-210)
         self.y = self.y % height
 
     def ate_itself(self):
