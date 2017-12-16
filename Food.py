@@ -19,7 +19,7 @@ class Food(object):
     def generate_food(self, width, height):
         """ Generate food at random location within the width and height """
 
-        self.x = round(random.randrange(0, width) / 10.0) * 10
+        self.x = round(random.randrange(0, width-210) / 10.0) * 10
         self.y = round(random.randrange(0, height) / 10.0) * 10
 
         return (self.x, self.y)

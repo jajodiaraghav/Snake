@@ -164,7 +164,7 @@ def get_blocks(food_rect, n):
 
     blocks = list()
     for i in range(n):
-        block_x = round(random.randrange(0, width) / 10.0) * 10
+        block_x = round(random.randrange(0, (width)) / 10.0) * 10
         block_y = round(random.randrange(0, height) / 10.0) * 10
 
         block_width, block_height = 10, 10
@@ -240,7 +240,7 @@ def gameLoop():
                 scorewindow.mainloop()
                 highscorefile.close()
 
-                # incase useer wants to countinue after creating highscore
+                # incase user wants to countinue after creating highscore
                 # to read his new score
                 highscorefile = open('highscore.txt', 'rt')
                 highscore = highscorefile.readline()
@@ -374,8 +374,6 @@ def gameLoop():
                 # try generating the food at a position where blocks are not present.
                 while food_collides_block(food.get_rect(), blocks):
                     food.generate_food(width - food.size, height - food.size)
-                
-                print(food.x, food.y)
 
             """ Draw """
             game_display.fill((255, 255, 255))
