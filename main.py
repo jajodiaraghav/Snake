@@ -278,28 +278,28 @@ def gameLoop():
                 pyExit = True
             if event.type == pygame.KEYDOWN or keyp != None:
                 try:
-                    if keyp == 'lt' or event.key == pygame.K_LEFT:
+                    if keyp == 'lt' or event.key == pygame.K_LEFT and dirn != "right":
                         dirn = "left"
                         dx = -1
                         dy = 0
                 except:
                     blank = []
                 try:
-                    if keyp == 'rt' or event.key == pygame.K_RIGHT:
+                    if keyp == 'rt' or event.key == pygame.K_RIGHT and dirn != "left":
                         dirn = "right"
                         dx = 1
                         dy = 0
                 except:
                     blank = []
                 try:
-                    if keyp == 'up' or event.key == pygame.K_UP:
+                    if keyp == 'up' or event.key == pygame.K_UP and dirn != "down":
                         dirn = "up"
                         dy = -1
                         dx = 0
                 except:
                     blank = []
                 try:
-                    if keyp == 'dn' or event.key == pygame.K_DOWN:
+                    if keyp == 'dn' or event.key == pygame.K_DOWN and dirn != "up":
                         dirn = "down"
                         dy = 1
                         dx = 0
