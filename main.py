@@ -307,7 +307,7 @@ def gameLoop():
                     blank = []
                 try:
                     if keyp == 'p' or event.key == pygame.K_p:
-                        pause()
+                        pause(scorestr)
                 except:
                     blank = []
                 try:
