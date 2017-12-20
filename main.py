@@ -114,12 +114,12 @@ def pause(scorestr):
             keyp = get_button_event()
             # For keyboard
             if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_c:
-                        paused = False
+                if event.key == pygame.K_c:
+                    paused = False
 
-                    if event.key == pygame.K_q:
-                        pygame.quit()
-                        quit()
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
             
             # For mouse
             if keyp != None:
@@ -364,7 +364,7 @@ def gameLoop():
 
     # generate food at the center of the screen
     food = Food(int(width / 2), int(height / 2))
-    blocks = worlds(width, height, world_num)
+    blocks = worlds(width - 200, height, world_num)
 
     # Keeps track of the direction of the snake.
     dx, dy = 0, 0
