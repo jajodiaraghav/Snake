@@ -10,7 +10,7 @@ def worlds(width, height, level):
         block_left_top2 = Block(0, 0, 10, int(height / 3))
 
         block_right_top1 = Block(width - int(width / 3), 0, int(width / 3), 10)
-        block_right_top2 = Block(width - 10, 0, 10, int(width / 3))
+        block_right_top2 = Block(width - 10, 0, 10, int(height / 3))
 
         block_left_bottom1 = Block(0, height - 10, int(width / 3), 10)
         block_left_bottom2 = Block(0, height - int(height / 3), 10, int(height / 3))
