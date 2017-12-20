@@ -61,14 +61,15 @@ def pause(scorestr):
                     if keyp == 'c' or event.key == pygame.K_c:
                         paused = False
                 except:
-                    blank = []  # bypass exception
+                    pass
                 try:
                     if keyp == 'q' or event.key == pygame.K_q:
                         print('quit')
                         pygame.quit()
                         quit()
                 except:
-                    blank = []  # bypass the exception
+                    pass
+                    
         message("Paused", (0, 0, 0))
         message("C to continue, Q to Quit", (200, 0, 0), 40)
         # display score on pause
@@ -181,10 +182,7 @@ def get_blocks(food_rect, n):
 
 
 def gameLoop():
-    global dirn
-    global k
-    global highscore
-    global namehighscore
+    global dirn, k, highscore, namehighscore
     pyExit = False
     pyOver = False
 
@@ -194,7 +192,7 @@ def gameLoop():
     # Initialize the game
     snake = Snake(200, 200, img)
     food = Food(int(width / 2), int(height / 2))
-    blocks = worlds(width, height, world_num)
+    blocks = worlds(width - 200, height, world_num)
 
     # Keeps track of the direction of the snake.
     dx, dy = 0, 0
@@ -321,7 +319,7 @@ def gameLoop():
         if score > 10:
             score = 0
             world_num += 1
-            blocks = worlds(width, height, world_num)
+            blocks = worlds(width - 200, height, world_num)
             food.x, food.y = int(width / 2), int(height / 2)
 
         # Engage boost of pressing shift
