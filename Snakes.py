@@ -14,6 +14,39 @@ font= pygame.font.SysFont("comicsansms", 35)
 def score(score):
 	t=font.render("Score: "+str(score), True, (0,0,0))
 	gameDisplay.blit(t,[0,0])
+# Snake class
+class Snake:
+
+    # Initializes a Snake object
+    def __init__(self, x, y, startLength):
+        self.startLength = startLength
+        self.startX = x
+        self.startY = y
+        self.reset()
+
+    # Resets snake back to its original state
+    def reset(self):
+        self.pieces = []
+        self.direction = 1
+
+        for n in range(0, self.startLength):
+            self.pieces.append((self.startX, self.startY + n))
+
+    # Changes the direction of the snake
+    def changeDirection(self, direction):
+        # Moving in the opposite direction of current movement is not allowed
+        if self.direction == 1 and direction == 2: return
+        if self.direction == 2 and direction == 1: return
+        if self.direction == 3 and direction == 4: return
+        if self.direction == 4 and direction == 3: return
+
+        self.direction = direction
+
+    # Returns the head piece of the snake
+    def getHead(self):
+        return self.pieces[0]
+
+    # Returns the tail piece of the snake	
 
 def pause():
         paused=True
