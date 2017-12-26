@@ -16,6 +16,16 @@ point_path = os.path.join('Assets','Sounds','Point.wav')
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.mixer.init()
 pygame.init()
+#intiating sounds
+intro_sound = pygame.mixer.Sound(os.path.join('Assets','Sounds','intro.wav'))
+game_sound = pygame.mixer.Sound(os.path.join('Assets','Sounds','gamesound.wav'))
+pause_sound = pygame.mixer.Sound(os.path.join('Assets','Sounds','pausesound.wav'))
+endgame_sound = pygame.mixer.Sound(os.path.join('Assets','Sounds','endsound.wav'))
+#the volume are set such that sounds are pleasant
+intro_sound.set_volume(0.1)
+game_sound.set_volume(0.6)
+pause_sound.set_volume(0.1)
+endgame_sound.set_volume(0.12)
 
 width, height = 1000, 600
 game_display = pygame.display.set_mode((width, height))
@@ -48,8 +58,11 @@ highscorefile.close()
 
 
 def pause(scorestr):
+    #stop in game music and play pause music
+    game_sound.stop()
+    pause_sound.play(-1) 
     paused = True
-    while paused:
+    while paused:    
         showButton()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,6 +89,10 @@ def pause(scorestr):
         message(scorestr, (255, 0, 0), 80)
         pygame.display.update()
         clock.tick(5)
+    #stop pause music and play in game music if game continues
+    if paused == False:
+        pause_sound.stop()
+        game_sound.play(-1)
 
 def button(msg,x,y,w,h):
     mouse = pygame.mouse.get_pos()
@@ -91,6 +108,8 @@ def button(msg,x,y,w,h):
     game_display.blit(text, t)
 
 def intro():
+    #play intro music infinite loop
+    intro_sound.play(-1)
     i=True
     while i:
         for event in pygame.event.get():
@@ -185,7 +204,9 @@ def gameLoop():
     global dirn, k, highscore, namehighscore
     pyExit = False
     pyOver = False
-
+    #stop intro music and play in game music infinite loop
+    intro_sound.stop()
+    game_sound.play(-1)
     score = 0
     world_num = 0
     scorestr = "Score:0"
@@ -199,6 +220,9 @@ def gameLoop():
     lossreason = ''
 
     while not pyExit:
+        if pyOver == True:
+            #play end music
+            endgame_sound.play(-1)
         while pyOver:
             image = pygame.image.load(python_path)
             game_display.blit(image, (0, 0))
@@ -262,6 +286,8 @@ def gameLoop():
                         blank = []  # bypass the exception
                     try:
                         if keyp == 'c' or event.key == pygame.K_c:
+                            #stop endgame music
+                            endgame_sound.stop()
                             gameLoop()
                     except:
                         blank = []  # bypass the exception
@@ -343,20 +369,21 @@ def gameLoop():
 
             """ Snake-Snake collision """
             if snake.ate_itself():
+                #stop game sound
+                game_sound.stop()
                 pyOver = True
                 lossreason = 'Oooops You Hit YOURSELF'
-                sound = pygame.mixer.Sound(point_path)
-                sound.play()
+                
 
             """ Snake-Block collision """
             for block in blocks:
                 block_rect = block.get_rect()
                 if block_rect.colliderect(snake_rect):
+                    #stop game sound
+                    game_sound.stop()
                     pyOver = True
                     lossreason = 'Ooops You Hit a BLOCKER'
-                    sound = pygame.mixer.Sound(point_path)
-                    sound.play()
-
+                    
             """ Snake-Food collision """
             # if snake collides with food, increase its length.
             if food_rect.colliderect(snake_rect):
@@ -364,6 +391,7 @@ def gameLoop():
                 snake.increment_length()
 
                 sound = pygame.mixer.Sound(point_path)
+                sound.set_volume(0.3)
                 sound.play()
 
                 # generate food at random x, y.
