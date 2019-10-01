@@ -5,7 +5,7 @@
 A simple game built using Python Pygame Library.
 
 <dl>
-  <dt>Note</dt>
+  <dt>Note : </dt>
   <dd>You must have Python installed to run this application</dd>
 </dl>
 
